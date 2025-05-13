@@ -36,11 +36,11 @@ func newImageProcessor(c fs.Config) ImageProcessor {
 		temporalPatchSize: 2,
 		mergeSize:         mergeSize,
 		minPixels:         56 * 56,
-		maxPixels:         28 * 28 * 4 * 1280,
+		maxPixels:         28 * 28 * 1280, // 1MP limit
 		factor:            patchSize * mergeSize,
 		rescaleFactor:     1.0 / 255.0,
-		imageMean:         []float32{0.48145466, 0.4578275, 0.40821073},
-		imageStd:          []float32{0.26862954, 0.26130258, 0.27577711},
+		imageMean:         imageproc.ClipDefaultMean[:],
+		imageStd:          imageproc.ClipDefaultSTD[:],
 	}
 }
 

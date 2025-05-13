@@ -139,7 +139,7 @@ type VisionModelOptions struct {
 	ropeTheta         float32
 	spatialMergeSize  int
 	windowSize        int
-	fullAttnBlocks    []int
+	fullAttnBlocks    []int32
 	temporalPatchSize int
 }
 
@@ -235,7 +235,7 @@ func (m *VisionModel) Forward(ctx ml.Context, pixelValues ml.Tensor, grid *Grid)
 	mask := blockDiagonalMask(ctx, hiddenStates.Dim(1), bounds, m.VisionModelOptions.numHeads)
 	// Apply encoder layers
 	for i, layer := range m.Layers {
-		if slices.Contains(m.fullAttnBlocks, i) {
+		if slices.Contains(m.fullAttnBlocks, int32(i)) {
 			hiddenStates = layer.Forward(ctx, hiddenStates, cos, sin, nil, m.VisionModelOptions)
 		} else {
 			hiddenStates = layer.Forward(
@@ -383,12 +383,8 @@ func newVisionModel(c fs.Config) *VisionModel {
 			spatialMergeSize:  spatialMergeSize,
 			windowSize:        windowSize,
 			temporalPatchSize: temporalPatchSize,
+			fullAttnBlocks:    fullAttnBlocks,
 		},
-	}
-
-	for i := range fullAttnBlocks {
-		// full attention block indexes have to be converted to int for use with the slices package
-		model.fullAttnBlocks = append(model.fullAttnBlocks, int(fullAttnBlocks[i]))
 	}
 
 	return model

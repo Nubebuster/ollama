@@ -1073,12 +1073,8 @@ const (
 
 func (t *Tensor) RoPE(ctx ml.Context, positionIDs, ropeFactors ml.Tensor, ropeDim, ropeType uint32, ropeBase, ropeScale float32, options ...ml.RopeOption) ml.Tensor {
 	// Default options
-	opts := &ml.RopeOpts{
-		DefaultContextLen: 131072,
-		YarnExtFactor:     0.0,
-		YarnAttnFactor:    1.0,
-		YarnBetaFast:      32.0,
-		YarnBetaSlow:      1.0,
+	opts := &ml.RopeOptions{
+		OriginalContextLen: 131072,
 	}
 
 	// Apply any provided options
@@ -1104,13 +1100,13 @@ func (t *Tensor) RoPE(ctx ml.Context, positionIDs, ropeFactors ml.Tensor, ropeDi
 			ropeFactors.(*Tensor).t,
 			C.int(ropeDim),
 			C.int(ropeType),
-			C.int(opts.DefaultContextLen),
+			C.int(opts.OriginalContextLen),
 			C.float(ropeBase),
 			C.float(ropeScale),
-			C.float(opts.YarnExtFactor),
-			C.float(opts.YarnAttnFactor),
-			C.float(opts.YarnBetaFast),
-			C.float(opts.YarnBetaSlow),
+			C.float(0.0),
+			C.float(1.0),
+			C.float(32.0),
+			C.float(1.0),
 		),
 	}
 }
