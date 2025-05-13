@@ -114,8 +114,11 @@ void grammar_free(struct llama_grammar *g) {
         if (g->vocab != nullptr) {
             delete g->vocab;
         }
-        llama_grammar_free_impl(g);
     }
+    if (g->o_vocab != nullptr) {
+            delete g->o_vocab;
+        }
+    llama_grammar_free_impl(g);
 }
 
 void grammar_apply(struct llama_grammar *g, struct llama_token_data_array *tokens) {
